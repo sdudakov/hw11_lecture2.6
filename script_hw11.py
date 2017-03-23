@@ -1,23 +1,19 @@
-import glob
-#import os.path
 import os
 import shutil
 import subprocess
 
 def get_files(dir_name): #получить список файлов
-	jpg_files = glob.glob(os.path.join(dir_name, "*.jpg"))
+	jpg_files = os.listdir(os.path.join(dir_name))
 	return jpg_files
 
-def copy_files(files, dir_name): #создать директорию назначения, скопировать туда файлы
-	destination = os.path.join(dir_name)
-	os.mkdir(destination)
-	for current_file in files:
-		shutil.copy(current_file, destination)
+def convert_files(files, source_dir_name, destination_dir_name): #конвертировать файлы внешней командой
+    source_path = os.path.join(source_dir_name)
+    destination_path = os.path.join(destination_dir_name)
+    os.mkdir(destination_path)
+    for current_file in files:
+    	source_file = source_path + "/" + current_file
+    	destination_file = destination_path + "/" + current_file
+    	arg = [ "convert", source_file, "-resize", "200", destination_file ]
+    	subprocess.Popen(arg)
 
-def convert_files(files): #конвертировать файлы внешней командой
-	for current_file in files:
-		arg = [ "convert", current_file, "-resize", "200", current_file ]
-		subprocess.Popen(arg)
-
-copy_files(get_files("Source"), "Destination")
-convert_files(get_files("Destination"))
+convert_files(get_files("Source"), "Source", "Destination")
